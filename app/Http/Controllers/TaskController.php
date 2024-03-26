@@ -16,7 +16,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return Task::where('completed', false)->with('subtasks')->get(); // Fetch ongoing tasks with subtasks
+        return Task::with('subtasks')->get(); // Fetch ongoing tasks with subtasks
     }
 
     /**
@@ -62,7 +62,7 @@ class TaskController extends Controller
      */
     public function show($id)
     {
-        $task = Task::findOrFail($id)->with('subtasks');
+        $task = Task::with('subtasks')->findOrFail($id);
         return response()->json($task);
     }
 
@@ -78,7 +78,7 @@ class TaskController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'due_date' => 'nullable|date_format:Y-m-d\TH:i:sP', // Allow optional date format
+            'due_date' => 'nullable|date_format:Y-m-d H:i:s', // Allow optional date format
             'completed' => 'nullable|boolean',
             'subtasks.*.id' => 'nullable|integer', // Allow updating subtask IDs
             'subtasks.*.title' => 'nullable|string|max:255', // Allow updating subtask titles
@@ -147,11 +147,16 @@ class TaskController extends Controller
     }
 
     // Additional methods for subtasks (assuming related to tasks)
-
-    public function showSubtasks($taskId)
+    public function getSubtasks($taskId)
     {
-        $task = Task::findOrFail($taskId);
-        return response()->json($task->subtasks);
+        $task = Task::findOrFail($taskId);  // Find the parent task
+
+        // Check if the task has any subtasks
+        if ($task->subtasks->count() > 0) {
+            return response()->json($task->subtasks);
+        } else {
+            return response()->json([], 204); // Empty response with No Content status code
+        }
     }
 
     public function storeSubtask(Request $request, $taskId)
