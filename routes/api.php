@@ -15,12 +15,12 @@ Route::group(['prefix' => 'tasks'], function () {
     Route::put('/{id}', [TaskController::class, 'update']); // Update a task
     Route::delete('/{id}', [TaskController::class, 'destroy']); // Delete a task
 
-    // Additional routes for completed tasks
-    Route::get('/completed', [TaskController::class, 'completed']); // Get all completed tasks
-
     // Routes for subtasks 
     Route::get('/{taskId}/subtasks', [TaskController::class, 'getSubtasks']); // Get subtasks for a specific task
     Route::post('/{taskId}/subtasks', [TaskController::class, 'storeSubtask']); // Create a subtask for a specific task
     Route::put('/{taskId}/subtasks/{subtaskId}', [TaskController::class, 'updateSubtask']); // Update a subtask
     Route::delete('/{taskId}/subtasks/{subtaskId}', [TaskController::class, 'destroySubtask']); // Delete a subtask
 });
+
+// Additional routes for completed tasks
+Route::get('/completed', [TaskController::class, 'completed']); // Get all completed tasks

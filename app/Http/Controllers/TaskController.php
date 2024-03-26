@@ -16,7 +16,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return Task::with('subtasks')->get(); // Fetch ongoing tasks with subtasks
+        return Task::where('completed', false)->with('subtasks')->get(); // Fetch ongoing tasks with subtasks
     }
 
     /**
